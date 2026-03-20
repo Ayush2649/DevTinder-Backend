@@ -2,26 +2,24 @@ const express = require('express');
 
 const app = express();
 
-app.use("/user", (req, res, next) => {
-    console.log("Middleware 1");
-    next();
-    // res.send("Hello User");
-}, (req, res, next) => {
-    // res.send("Hello User 2");
-    console.log("Middleware 2");
-    next()
-}, (req, res, next) => {
-    // res.send("Hello User 3");
-    console.log("Middleware 3");
-    next();
-}, (req, res, next) => {
-    // res.send("Hello User 4");
-    console.log("Middleware 4");
-    next();
-}, (req, res, next) => { 
-    // res.send("Hello User 5");
-    console.log("Middleware 5");
-    next();
+const { adminAuth, userAuth } = require("./middlewares/auth")
+
+app.use("/admin", adminAuth);
+
+app.get("/user/login", (req, res) => {
+    res.send("User login");
+})
+
+app.get("/user", userAuth, (req, res) => {
+    res.send("User data");
+})
+
+app.get("/admin/getAllData", (req, res) => {
+    res.send("All data for admin");
+});
+
+app.get("/admin/deleteUser", (req, res) => {
+    res.send("User deleted by admin");
 });
 
 app.listen(7777, () => {
