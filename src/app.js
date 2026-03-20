@@ -18,7 +18,7 @@ app.use("/user", (req, res, next) => {
     // res.send("Hello User 4");
     console.log("Middleware 4");
     next();
-}, (req, res, next) => {
+}, (req, res, next) => { 
     // res.send("Hello User 5");
     console.log("Middleware 5");
     next();
