@@ -13,7 +13,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User saved successfully!");
   } catch (error) {
-    res.status(500).send("Error saving user");
+    res.status(500).send("Error saving user" + error.message);
   }
 });
 
@@ -63,19 +63,19 @@ app.delete("/user", async (req, res) => {
     res.send("User deleted successfully!" + deletedUser);
   } catch (error) {
     res.status(500).send("Something went wrong");
-  } 
+  }
 });
 
 // Update the data of the user in the database using _id
 app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
-  
+
   try {
-    await User.findByIdAndUpdate(userId, data);
-    res.send("User updated successfully!");  
+    await User.findByIdAndUpdate(userId, data, { runValidators: true });
+    res.send("User updated successfully!");
   } catch (error) {
-    res.status(500).send("Something went wrong");
+    res.status(500).send("Update failed: " + error.message);
   }
 });
 
