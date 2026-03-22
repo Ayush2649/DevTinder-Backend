@@ -14,7 +14,41 @@ app.post("/signup", async (req, res) => {
   } catch (error) {
     res.status(500).send("Error saving user");
   }
+});
 
+app.get("/user", async (req, res) => {
+  const userId = req.body._id;
+
+  try {
+    const user = await User.findOne({ _id: userId });
+    if (!user) {
+      res.status(404).send("User not found");
+    } else {
+      res.send(user);
+    }
+  } catch (error) {
+    res.status(500).send("Something went wrong");
+  }
+
+  // try {
+  //   const user = await User.find({ email: userEmail });
+  //   if (user.length === 0) {
+  //     res.status(404).send("User not found");
+  //   } else {
+  //     res.send(user);
+  //   }
+  // } catch (err) {
+  //   res.status(500).send("Something went wrong");
+  // }
+});
+
+app.get("/feed", async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.send(users);
+  } catch (err) {
+    res.status(500).send("Something went wrong");
+  }
 });
 
 connectDB()
