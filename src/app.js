@@ -5,6 +5,7 @@ const app = express();
 
 app.use(express.json());
 
+// Post the data of the user in the database
 app.post("/signup", async (req, res) => {
   const user = new User(req.body);
 
@@ -16,6 +17,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// Get the data of the user from the database using _id
 app.get("/user", async (req, res) => {
   const userId = req.body._id;
 
@@ -42,6 +44,7 @@ app.get("/user", async (req, res) => {
   // }
 });
 
+// Get the data of all the users from the database
 app.get("/feed", async (req, res) => {
   try {
     const users = await User.find({});
@@ -49,6 +52,18 @@ app.get("/feed", async (req, res) => {
   } catch (err) {
     res.status(500).send("Something went wrong");
   }
+});
+
+// Delete the data of the user from the database using _id
+app.delete("/user", async (req, res) => {
+  const userId = req.body._id;
+
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+    res.send("User deleted successfully!" + deletedUser);
+  } catch (error) {
+    res.status(500).send("Something went wrong");
+  } 
 });
 
 connectDB()
