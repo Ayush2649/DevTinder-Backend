@@ -3,8 +3,11 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const bcrypt = require("bcrypt");
 const app = express();
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 app.use(express.json());
+app.use(cookieParser());
 
 // Post the data of the user in the database
 app.post("/signup", async (req, res) => {
@@ -42,6 +45,7 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// Login the user using email and password
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -56,6 +60,8 @@ app.post("/login", async (req, res) => {
     if (!isPasswordValid) {
       throw new Error("Invalid Credentials");
     } else {
+      const token = await jwt.sign({ userId: user._id }, "secretKey");
+      res.cookie("token", token);
       res.send("Login successful!");
     }
   } catch (error) {
@@ -129,6 +135,30 @@ app.patch("/user/:userId", async (req, res) => {
     res.send("User updated successfully!");
   } catch (error) {
     res.status(500).send("Update failed: " + error.message);
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const cookie = req.cookies;
+
+    const token = cookie.token;
+    if (!token) {
+      throw new error("No token found");
+    }
+    const decodedMessage = jwt.verify(token, "secretKey");
+    // console.log(decodedMessage);
+
+    const _id = decodedMessage.userId;
+    const user = await User.findOne({ _id });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // console.log(cookie);
+    res.send(user);
+  } catch (error) {
+    res.status(500).send("Error " + error.message);
   }
 });
 
