@@ -68,4 +68,13 @@ authRouter.post("/login", async (req, res) => {
   }
 });
 
+// Logout the user by clearing the token cookie
+authRouter.post("/logout", async (req, res) => {
+  if(!req.cookies.token) {
+    return res.status(400).send("User is not logged in");
+  }
+  await  res.clearCookie("token");
+  res.send("Logout successful!");
+});
+
 module.exports = authRouter;
